@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        信鸽和HTTPS｜null
+        视觉记忆｜null
         
     </title>
 
-    <link rel="canonical" href="https://liushengchieh.github.io/2018/09/18/信鸽和HTTPS/">
+    <link rel="canonical" href="https://liushengchieh.github.io/2018/10/07/视觉记忆/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -137,18 +137,15 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>信鸽和HTTPS</h1>
+                    <h1>视觉记忆</h1>
                     
                     <span class="meta">
                          作者 shengjie.liu
                         <span>
-                          日期 2018-09-18
+                          日期 2018-10-07
                          </span>
                     </span>
                     <div class="tags text-center">
-                        
-                        <a class="tag" href="/tags/#Translation"
-                           title="Translation">Translation</a>
                         
                     </div>
                 </div>
@@ -157,7 +154,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            信鸽和HTTPS
+            视觉记忆
         </span>
     </div>
 </header>
@@ -168,59 +165,19 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <p>加密是一个很难理解的东西，这里头满是数学证明。不过，除非你是在开发一个加密系统，否则无需了解那些高阶的复杂知识。</p>
-<p>如果你看这篇文章是为了创造下一个 HTTPS 协议，很抱歉，请出门左走，鸽子是远远不够的。不然的话，先去煮一壶咖啡，再来看文章吧～</p>
-<h2 id="爱丽丝、鲍勃以及鸽子？"><a href="#爱丽丝、鲍勃以及鸽子？" class="headerlink" title="爱丽丝、鲍勃以及鸽子？"></a>爱丽丝、鲍勃以及鸽子？</h2><p>你在网络上进行的任何活动（阅读这篇文章、在京东上购物、分享猫咪的照片），都是通过服务器发送和接收信息。</p>
-<p>这可能有点抽象。那就让我们设想这些信息都是通过信鸽传播的。看起来可能有点奇怪，不过请相信我，HTTPS 的工作原理和信鸽是一样的，只是要快得多。</p>
-<p>同样，我们用爱丽丝、鲍勃以及马洛里来代称服务器、客户机以及黑客。如果之前你尝试过理解加密系统的原理，那这些名字你不会感到陌生，因为他们在技术文献中经常出现。</p>
-<h2 id="第一次简单的通信"><a href="#第一次简单的通信" class="headerlink" title="第一次简单的通信"></a>第一次简单的通信</h2><p>如果爱丽丝想要和鲍勃通信，她会将信件绑在信鸽的腿上，然后信鸽带着爱丽丝的信飞到鲍勃那里去。鲍勃收到信后，知道了爱丽丝对他的爱意。到目前为止，一切看起来都还不错。</p>
-<p>但要是马洛里在途中拦截下正在飞行的鸽子，然后将信件内容篡改了呢？鲍勃不会知道爱丽丝写来的这封信在途中是被篡改过的。</p>
-<p>这就是 <strong>HTTP</strong> 的工作方式。很恐怖吧？所以，我不会通过 HTTP 发送我的银行卡信息，你也不应该这样做。</p>
-<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><p>假设爱丽丝和鲍勃非常的狡猾，他们约定好以一种密文的形式写信。他们将每个字母在字母表上移动三个位置，例如：D —&gt; A，E —&gt; B，F —&gt; C。而诸如 “secret message” 这样的句子，就会变成 “pbzobq jbppxdb”。</p>
-<p>如果马洛里再次拦截下鸽子，并试图篡改信件内容。他会无从下手，因为他不知道密文的规则，即便改了也会毫无意义，令人不知所云。但是鲍勃会根据密文的规则轻松的解读出信件的内容，也就是 A —&gt; D，B —&gt; E，C — &gt; F。加密的句子 “pbzobq jbppxdb” 会被解密成 “secret message”。</p>
-<p>酷毙了！</p>
-<p>这就是<strong>对称加密（symmetric key cryptography）</strong>，因为你知道了如何加密也就知道了如何解密。</p>
-<p>上面举例的加密方法就是非常有名的<strong>凯撒密码（Caesar cipher）</strong>。在现实生活中，我们使用的是更加酷更加复杂的加密方法，但主要的原理都是一样的。</p>
-<h2 id="如何确定加密规则？"><a href="#如何确定加密规则？" class="headerlink" title="如何确定加密规则？"></a>如何确定加密规则？</h2><p>除了发送者和接受者，没有其他人知道加密规则，在这种情况下，对称加密是非常安全的。在凯撒密码中，加密的关键在于每个字母移动的偏移量。在我们的例子里，偏移量设定为3，但也可以是4或者12。</p>
-<p>问题在于，如果爱丽丝和鲍勃在用鸽子通信之前从未谋面，他们就没有安全的办法来制定加密规则。如果他们把加密规则写在信里通过鸽子传递，马洛里就可以拦截鸽子从而窃取加密规则。之后，每次爱丽丝和鲍勃通的信，马洛里都可以拦截下并且通过他们的加密规则去破解和修改。</p>
-<p>这就是典型的<strong>中间人攻击</strong>，避免它的唯一办法就是同时更改加密系统。</p>
-<h2 id="携带盒子的信鸽"><a href="#携带盒子的信鸽" class="headerlink" title="携带盒子的信鸽"></a>携带盒子的信鸽</h2><p>因此，爱丽丝和鲍勃制定了一个更加安全的加密系统。当鲍勃要发送信息给爱丽丝时，他会进行如下步骤：</p>
-<ul>
-<li>鲍勃给爱丽丝寄去一只鸽子，鸽子没有携带任何信件。</li>
-<li>爱丽丝在鸽子腿上绑了一个带锁但是没有上锁的盒子，钥匙保存在自己手里，然后将鸽子寄回给鲍勃。</li>
-<li>鲍勃把信件放在盒子里，上锁。鸽子又飞回到爱丽丝那里。</li>
-<li>爱丽丝收到鸽子后，用手中的钥匙打开盒子，然后表情愉悦的看鲍勃写给她的情书。</li>
-</ul>
-<p>这样一来，马洛里因为没有盒子的钥匙，即便拦截下鸽子也无法修改信件内容。当爱丽丝要给鲍勃写信时，遵循的也是以上这些步骤。</p>
-<p>爱丽丝和鲍勃使用的这种新的加密方式通常叫做<strong>非对称加密（asymmetric key cryptograpy）</strong>。为啥叫做非对称呢？因为即便你知道如何加密（给盒子上锁），你也没有办法解密（打开盒子的锁）。在技术上，这个盒子就是<strong>公钥（public key）</strong>，而打开盒子的钥匙叫做<strong>私钥（private key）</strong>。</p>
-<h2 id="为啥要相信这个盒子？"><a href="#为啥要相信这个盒子？" class="headerlink" title="为啥要相信这个盒子？"></a>为啥要相信这个盒子？</h2><p>如果你看的很认真，那么可能会注意到一个问题。当鲍勃收到没有上锁的盒子，他怎么确定这个盒子没有被马洛里调包呢？</p>
-<p>爱丽丝决定给盒子签名，当鲍勃收到盒子后检查上面的签名就可以知道盒子是不是爱丽丝发过来的那个。</p>
-<p>有些人可能会想，鲍勃如何第一时间识别出爱丽丝的签名呢？好问题！爱丽丝和鲍勃也想到了这个麻烦，所以他们决定，让特德在盒子上签名，爱丽丝不用签了。</p>
-<p>特德是何方神圣？特德是一个众所周知并且相当值得信赖的家伙。特德可以在任意盒子上签名，大家都很信任特德，因为他只给那些合法的朋友所持有的盒子签名。</p>
-<p>特德会给爱丽丝的盒子签名，是因为他确定这个请求签名的人是真的爱丽丝。所以，马洛里无法把自己的盒子伪装成是爱丽丝的盒子，因为鲍勃会知道这个是假的，上面没有特德的签名。</p>
-<p>在技术上，特德指的是<strong>证书颁发机构</strong>。你用来看这篇文章的浏览器里就附带了来自于各个证书颁发机构的签名。</p>
-<p>所以，当你第一次访问某个网站，之所以信任他的盒子，是因为信任特德，特德告诉你盒子是合法的。</p>
-<h2 id="盒子很重啊"><a href="#盒子很重啊" class="headerlink" title="盒子很重啊"></a>盒子很重啊</h2><p>现在，爱丽丝和鲍勃终于有了一个安全可靠的系统去进行通信。但同时，他们也意识到携带盒子的鸽子比只携带信息的鸽子飞行起来要慢好多。</p>
-<p>他们决定只在发送和接收关于制定加密规则（还记得凯撒密码吗？）的信息的时候使用盒子加密（非对称加密）。</p>
-<p>通过这种方式，他们既得到了非对称加密的可靠性，又兼顾了对称加密的高效率。双赢！</p>
-<p>在现实世界，不存在慢鸽子。尽管如此，通过非对称加密方式加密信息依然比用对称加密方式要慢，所以我们只用这种加密方式来交换密钥。</p>
-<p>好啦，你的咖啡应该煮好了， <strong>HTTPS</strong> 是如何工作的你也知道了。去喝吧，你值得来一杯。 </p>
-<p>翻译自 <a href="https://medium.freecodecamp.org/https-explained-with-carrier-pigeons-7029d2193351" target="_blank" rel="noopener">HTTPS explained with carrier pigeons</a></p>
+                <p>记忆这东西真的奇特，几年前看过的电影，翻翻记录，光看着片名和日期，就能回忆起当时的场景来。</p>
+<p>好像自己在记忆这方面，特别依赖于视觉。不管是读书也好，看电影也罢，都是这样。</p>
+<p>现在是2018年10月7日，国庆节的最后一天了。刚看完《狄仁杰之四大天王》，原本以为之前只看过这个狄仁杰系列的第一部，没想到豆瓣上标注了第二部也看过。</p>
 
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2018/10/07/视觉记忆/" data-toggle="tooltip" data-placement="top"
-                           title="视觉记忆">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2018/09/18/身体最重要/" data-toggle="tooltip" data-placement="top"
-                           title="身体最重要">Next Post &rarr;</a>
+                        <a href="/2018/09/18/信鸽和HTTPS/" data-toggle="tooltip" data-placement="top"
+                           title="信鸽和HTTPS">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -236,7 +193,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#爱丽丝、鲍勃以及鸽子？"><span class="toc-text">爱丽丝、鲍勃以及鸽子？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第一次简单的通信"><span class="toc-text">第一次简单的通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加密"><span class="toc-text">加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何确定加密规则？"><span class="toc-text">如何确定加密规则？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#携带盒子的信鸽"><span class="toc-text">携带盒子的信鸽</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为啥要相信这个盒子？"><span class="toc-text">为啥要相信这个盒子？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#盒子很重啊"><span class="toc-text">盒子很重啊</span></a></li></ol>
+                    
                 </div>
             </div>
         </div>
@@ -257,9 +214,6 @@
                         <a href="/tags/">FEATURED TAGS</a>
                     </h5>
                     <div class="tags">
-                        
-                        <a class="tag" href="/tags/#Translation"
-                           title="Translation">Translation</a>
                         
                     </div>
                 </section>
