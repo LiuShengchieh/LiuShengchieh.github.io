@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        未来可期｜null
+        Shell脚本|性能测试之启动时间｜null
         
     </title>
 
-    <link rel="canonical" href="https://liushengchieh.github.io/2018/10/07/未来可期/">
+    <link rel="canonical" href="https://liushengchieh.github.io/2019/02/24/Shell脚本-性能测试之启动时间/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -137,12 +137,12 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>未来可期</h1>
+                    <h1>Shell脚本|性能测试之启动时间</h1>
                     
                     <span class="meta">
                          作者 shengjie.liu
                         <span>
-                          日期 2018-10-07
+                          日期 2019-02-24
                          </span>
                     </span>
                     <div class="tags text-center">
@@ -154,7 +154,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            未来可期
+            Shell脚本|性能测试之启动时间
         </span>
     </div>
 </header>
@@ -165,26 +165,32 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <p>和女朋友一起计划了下，等她毕业后的两三年，即可在成都高新区买个二居室的房子。</p>
-<p>现在我每个月的薪资14.5k，女朋友毕业后一个月也有15k。</p>
-<p>一年的薪资两人加起来有28万左右，再加上年终奖（3个月）有9万左右，合计37万左右。在上海每个月房租5000，一年6万。37万-6万=31万。另外除掉11万的生活费，一年能存下20万。</p>
-<p>从后年（2020年）开始强制存储，这样过个两年，也就是到2022年初，即可交个首付。</p>
-<p>加油吧，按目前成都的房子限购政策，以及在上海工资的涨幅，未来可期。</p>
+                <p>安卓应用的性能测试，通常包括六个指标：启动时间、内存、CPU、耗电量、流量、流畅度。</p>
+<p>除了耗电量，其他五个指标的数据在我们团队中已经可以通过运行脚本的方式获取到。</p>
+<p>今天给大家分享下启动时间的脚本吧～</p>
+<p>首先，我们先明确一下安卓应用的启动时间应该如何计算。在这里，我给出一条命令：</p>
+<blockquote>
+<p>adb shell am start -W &lt;Package_Name&gt;/&lt;Activity_Name&gt;</p>
+</blockquote>
+<p>“adb shell”，安卓调试桥（Android Debug Bridge），这个大家都知道，不多解释。”am”指的是什么呢？Activity Manager，活动管理器，通过它可以启动App、启动Activity以及启动广播和服务等等。</p>
+<p>安卓应用在启动时都会先出现一个欢迎页，它其实就是一个Activity。应用从被点击到出现欢迎页的这段时间，被定义为启动时间。在知道应用欢迎页的 Activity Name 后，就可以通过上面这条命令来获取启动时间。</p>
+<p>图中的 “TotalTime” 即是本次启动所花费的时间，单位毫秒（ms）。</p>
+<p>在知道启动时间的测试方法后，我们再来确定启动时间的不同场景。应用启动时间的场景差异，主要有四个：<br>1、首次安装：第一次下载应用后的启动时长；<br>2、覆盖安装：旧版本升级到新版本后的启动时长；<br>3、冷启动：杀掉应用的所有进程后的启动时长；<br>4、热启动：back键正常退出应用后的启动时长。</p>
+<p>目前，我们团队的启动时间测试只包括首次安装、冷启动和热启动。</p>
+<p>接下来，用脚本说话吧：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"># Author: Shengjie.Liu</span><br><span class="line"># 安装应用，传入参数：apk文件的绝对地址</span><br><span class="line">function install() &#123;</span><br><span class="line">  adb install $&#123;1&#125;</span><br><span class="line">  sleep 5s</span><br><span class="line">  adb shell input keyevent 3</span><br><span class="line">&#125;</span><br><span class="line"># 卸载应用，传入参数：应用包名</span><br><span class="line">function uninstall() &#123;</span><br><span class="line">  adb uninstall $&#123;1&#125;</span><br><span class="line">  sleep 2s</span><br><span class="line">&#125;</span><br><span class="line"># 获取启动时间，传入参数：&lt;包名&gt;/&lt;启动页活动名&gt;</span><br><span class="line">function getStartupTime() &#123;</span><br><span class="line">  adb shell am start -W  $&#123;1&#125; | grep  -i Total | sed &apos;s/ //g&apos; | tr -d $&apos;\r&apos; | cut -d&quot;:&quot; -f 2</span><br><span class="line">  sleep 2s</span><br><span class="line">&#125;</span><br><span class="line"># 清除应用所有进程，传入参数：应用包名</span><br><span class="line">function clearApp() &#123;</span><br><span class="line">  adb shell am force-stop $&#123;1&#125;</span><br><span class="line">  sleep 10s</span><br><span class="line">&#125;</span><br><span class="line"># Back键退出应用</span><br><span class="line">function quitApp() &#123;</span><br><span class="line">  adb shell input keyevent 4</span><br><span class="line">  adb shell input keyevent 4</span><br><span class="line">  adb shell input keyevent 4</span><br><span class="line">  sleep 2s</span><br><span class="line">&#125;</span><br><span class="line"># 运行脚本后，提醒输入APK文件地址和包名&amp;启动页活动名</span><br><span class="line">read -p &quot;请输入APK地址：&quot; apk_address</span><br><span class="line">read -p &quot;请输入包名和活动名：&quot; component</span><br><span class="line"># 截取出包名赋值给变量&quot;package_name&quot;</span><br><span class="line">package_name=$(echo $&#123;component&#125; | cut -d&quot;/&quot; -f1)</span><br><span class="line">echo &quot;Package name is &apos;$&#123;package_name&#125;&apos;&quot;</span><br><span class="line"># 获取首次安装的启动时间，重复三次，最后取平均值</span><br><span class="line">install $&#123;apk_address&#125;</span><br><span class="line">starttime1=`getStartupTime $&#123;component&#125;`</span><br><span class="line">uninstall $&#123;package_name&#125;</span><br><span class="line"># 第二次</span><br><span class="line">install $&#123;apk_address&#125;</span><br><span class="line">starttime2=`getStartupTime $&#123;component&#125;`</span><br><span class="line">uninstall $&#123;package_name&#125;</span><br><span class="line"># 第三次</span><br><span class="line">install $&#123;apk_address&#125;</span><br><span class="line">starttime3=`getStartupTime $&#123;component&#125;`</span><br><span class="line">sleep 20s</span><br><span class="line"># 三次的启动时间</span><br><span class="line">echo &quot;首次安装时间（ms）：$starttime1 $starttime2 $starttime3&quot;</span><br><span class="line"># 平均值</span><br><span class="line">echo &quot;($starttime1+$starttime2+$starttime3)/3&quot; | bc</span><br><span class="line"># The first installation time test is over, beginning warm boot test</span><br><span class="line">quitApp</span><br><span class="line"># 获取热启动的启动时间（同上，重复三次，取平均值）</span><br><span class="line">starttime1=`getStartupTime $&#123;component&#125;`</span><br><span class="line">quitApp</span><br><span class="line">starttime2=`getStartupTime $&#123;component&#125;`</span><br><span class="line">quitApp</span><br><span class="line">starttime3=`getStartupTime $&#123;component&#125;`</span><br><span class="line">quitApp</span><br><span class="line">echo &quot;热启动时间（ms）：$starttime1 $starttime2 $starttime3&quot;</span><br><span class="line">echo &quot;($starttime1+$starttime2+$starttime3)/3&quot; | bc</span><br><span class="line"># 获取冷启动的启动时间（同上，重复三次，取平均值）</span><br><span class="line">clearApp $&#123;package_name&#125;</span><br><span class="line">starttime1=`getStartupTime $&#123;component&#125;`</span><br><span class="line">clearApp $&#123;package_name&#125;</span><br><span class="line">starttime2=`getStartupTime $&#123;component&#125;`</span><br><span class="line">clearApp $&#123;package_name&#125;</span><br><span class="line">starttime3=`getStartupTime $&#123;component&#125;`</span><br><span class="line">echo &quot;冷启动时间（ms）：$starttime1 $starttime2 $starttime3&quot;</span><br><span class="line">echo &quot;($starttime1+$starttime2+$starttime3)/3&quot; | bc</span><br><span class="line"># 启动时间测试结束，卸载应用</span><br><span class="line">uninstall $&#123;package_name&#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为安卓手机的多样性，此脚本未做容错处理，部分手机在脚本运行过程中可能会弹出权限确认框或者其他界面，从而导致脚本运行失败。这个问题，大家可以根据自己手机的特性来做对应处理。</p>
+<hr>
+<p><strong>欢迎关注微信公众号“测试开发Stack”，更多原创文章第一时间发布！</strong></p>
 
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2018/10/07/开发自测/" data-toggle="tooltip" data-placement="top"
-                           title="开发自测">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2018/10/07/视觉记忆/" data-toggle="tooltip" data-placement="top"
-                           title="视觉记忆">Next Post &rarr;</a>
+                        <a href="/2018/10/07/开发自测/" data-toggle="tooltip" data-placement="top"
+                           title="开发自测">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
